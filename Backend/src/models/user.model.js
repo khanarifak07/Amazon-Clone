@@ -25,6 +25,20 @@ const userSchema = new Schema(
     password: {
       type: String,
       required: [true, "Password is required"],
+      validate: {
+        validator: (value) => {
+          return value.lenght < 6;
+        },
+        message: "Password should contain atleast 6 characters",
+      },
+    },
+    address: {
+      type: String,
+      default: "",
+    },
+    type: {
+      type: String,
+      default: "user",
     },
     refreshToken: {
       type: String,
