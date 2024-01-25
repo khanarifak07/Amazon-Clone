@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/constants/global_variables.dart';
+import 'package:frontend/screens/auth/auth_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -7,12 +9,19 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      theme: ThemeData(
+        iconTheme: const IconThemeData(color: Colors.black),
+        appBarTheme: const AppBarTheme(elevation: 0),
+        scaffoldBackgroundColor: GlobalVariables.backgroundColor,
+        colorScheme: const ColorScheme.light(
+          primary: GlobalVariables.secondaryColor,
+        ),
+      ),
       title: 'Flutter Demo',
-      home: Text('Flutter Demo Home Page'),
+      home: const AuthScreen(),
     );
   }
 }
