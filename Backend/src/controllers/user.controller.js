@@ -21,14 +21,16 @@ const registerUser = asyncHandler(async (req, res) => {
     );
   }
 
-  const createdUser = await User.create({
+  const user = await User.create({
     username,
     email,
     password,
   });
-  if (!createdUser) {
+  if (!user) {
     throw new ApiError(500, "Something went wring while creating user");
   }
+
+  const createdUser = await User.findById(user._id).select("-password");
 
   return res
     .status(200)
