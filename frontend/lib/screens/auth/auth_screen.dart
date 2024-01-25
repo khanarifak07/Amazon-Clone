@@ -1,4 +1,6 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/config.dart';
 import 'package:frontend/constants/global_variables.dart';
 import 'package:frontend/widgets/custom_button.dart';
 import 'package:frontend/widgets/custom_textfield.dart';
@@ -17,18 +19,54 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   Auth _auth = Auth.signup;
+  bool isLoading = false;
   TextEditingController emailCtrl = TextEditingController();
-  TextEditingController nameCtrl = TextEditingController();
+  TextEditingController usernameCtrl = TextEditingController();
   TextEditingController passwordCtrl = TextEditingController();
-  //dispose the controller to prevent memory leakage
 
+  //dispose the controller to prevent memory leakage
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
     emailCtrl.dispose();
-    nameCtrl.dispose();
+    usernameCtrl.dispose();
     passwordCtrl.dispose();
+  }
+
+  Future<void> registerUser(
+    final String username,
+    final String email,
+    final String password,
+  ) async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+      //create dio object
+      Dio dio = Dio();
+      //create data (user formdata only when you want to pass image file)
+      var data = {
+        "username": username,
+        "email": email,
+        "password": password,
+      };
+
+      //make dio post request
+      Response response = await dio.post(registerApi, data: data);
+      //handle the response
+      if (response.statusCode == 200) {
+        print("User regsitered successfully ${response.data}");
+      } else {
+        print("User registeration failed ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error while registering user $e");
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -68,8 +106,8 @@ class _AuthScreenState extends State<AuthScreen> {
               Column(
                 children: [
                   CustomTextField(
-                    labelText: "Name",
-                    controller: nameCtrl,
+                    labelText: "Username",
+                    controller: usernameCtrl,
                   ),
                   const SizedBox(height: 12),
                   CustomTextField(
@@ -82,7 +120,26 @@ class _AuthScreenState extends State<AuthScreen> {
                     controller: passwordCtrl,
                   ),
                   const SizedBox(height: 12),
-                  CustomButtom(ontap: () {}, text: "Sign Up")
+                  CustomButtom(
+                    ontap: () async {
+                      await registerUser(
+                        usernameCtrl.text,
+                        emailCtrl.text,
+                        passwordCtrl.text,
+                      );
+                      usernameCtrl.clear();
+                      emailCtrl.clear();
+                      passwordCtrl.clear();
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text("User Registered Successfully")));
+                      }
+                    },
+                    child: isLoading
+                        ? const CircularProgressIndicator()
+                        : const Text("Sign Up"),
+                  )
                 ],
               ),
             ListTile(
@@ -115,24 +172,9 @@ class _AuthScreenState extends State<AuthScreen> {
                     controller: passwordCtrl,
                   ),
                   const SizedBox(height: 12),
-                  CustomButtom(ontap: () {}, text: "Sign In")
+                  // CustomButtom(ontap: () {}, text: "Sign In")
                 ],
               ),
-
-            /*  const SizedBox(height: 12),
-            const CustomTextField(labelText: "Name"),
-            const SizedBox(height: 12),
-            const CustomTextField(labelText: "Email"),
-            const SizedBox(height: 12),
-            const CustomTextField(labelText: "Password"),
-            const SizedBox(height: 12),
-            ElevatedButton(onPressed: () {}, child: const Text("Sign Up")),
-            MaterialButton(
-              color: GlobalVariables.secondaryColor,
-              minWidth: double.maxFinite,
-              onPressed: () {},
-              child: const Text("Sign Up"),
-            ) */
           ],
         ),
       )),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class CustomButtom extends StatelessWidget {
-  final Function() ontap;
-  final String text;
-  const CustomButtom({super.key, required this.ontap, required this.text});
+  final VoidCallback ontap;
+  final Widget child;
+  const CustomButtom({super.key, required this.ontap, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +14,7 @@ class CustomButtom extends StatelessWidget {
         double.maxFinite,
         50,
       )),
-      child: Text(text),
+      child: child,
     );
   }
 }
