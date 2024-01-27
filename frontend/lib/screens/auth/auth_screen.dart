@@ -1,9 +1,13 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/config.dart';
 import 'package:frontend/constants/global_variables.dart';
-import 'package:frontend/widgets/custom_button.dart';
+import 'package:frontend/models/user.model.dart';
+import 'package:frontend/screens/homepage/homepage.dart';
 import 'package:frontend/widgets/custom_textfield.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 enum Auth {
   signup,
@@ -34,11 +38,14 @@ class _AuthScreenState extends State<AuthScreen> {
     passwordCtrl.dispose();
   }
 
+  //register method
   Future<void> registerUser(
-    final String username,
+      /* final String username,
     final String email,
-    final String password,
-  ) async {
+    final String password, */
+      {required UserModel userModel}
+      // final File image,//if you want to pass image
+      ) async {
     try {
       setState(() {
         isLoading = true;
@@ -46,11 +53,24 @@ class _AuthScreenState extends State<AuthScreen> {
       //create dio object
       Dio dio = Dio();
       //create data (user formdata only when you want to pass image file)
-      var data = {
+      /*  var data = {
         "username": username,
         "email": email,
         "password": password,
-      };
+      }; */
+
+      // Create FormData
+      /* FormData formData = FormData.fromMap({
+      'username': user.username,
+      'email': user.email,
+      'password': user.password,
+      'address': user.address,
+      'type': user.type,
+      'token': user.token,
+      'image': await MultipartFile.fromFile(image.path, filename: 'user_image.jpg'),
+    }); */
+
+      var data = userModel.toMap();
 
       //make dio post request
       Response response = await dio.post(registerApi, data: data);
@@ -67,6 +87,70 @@ class _AuthScreenState extends State<AuthScreen> {
         isLoading = false;
       });
     }
+  }
+
+  //save accessToken to sharedpreference
+  Future<void> saveAccessTokenToSharedPreference(String accessToken) async {
+    try {
+      var prefs = await SharedPreferences.getInstance();
+      prefs.setString('accessToken', accessToken);
+      log("Access Token saved successfully in shared preference $accessToken");
+    } catch (e) {
+      print("Error while saving accessToken to shared preference $e");
+    }
+  }
+
+  //login method
+  Future<String?> loginUser({
+    required UserModel userModel,
+    // required String email,
+    // required String password,
+  }
+      // required String email,
+      // required String password,
+      ) async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+
+      //create dio instance
+      Dio dio = Dio();
+      //create form data or normal data
+      var data = userModel.toMap();
+      // var data = {
+      //   'email': email,
+      //   'password': password,
+      // };
+      //make dio post request
+      Response response = await dio.post(loginApi, data: data);
+      //handle the response
+      if (response.statusCode == 200) {
+        log("user logged in successfully ${response.data}");
+        final String? accessToken = response.data['data']['accessToken'];
+        if (accessToken != null) {
+          await saveAccessTokenToSharedPreference(accessToken);
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const HomePage()),
+              (route) => false);
+          return accessToken;
+        } else {
+          print("Error while saving access token to shared preference");
+        }
+
+        print(accessToken);
+      } else {
+        print("Something went wrong while logging user");
+      }
+    } catch (e) {
+      print("Somehthing went wrong while logging user $e");
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+    return null;
   }
 
   @override
@@ -120,26 +204,32 @@ class _AuthScreenState extends State<AuthScreen> {
                     controller: passwordCtrl,
                   ),
                   const SizedBox(height: 12),
-                  CustomButtom(
-                    ontap: () async {
-                      await registerUser(
-                        usernameCtrl.text,
-                        emailCtrl.text,
-                        passwordCtrl.text,
-                      );
-                      usernameCtrl.clear();
-                      emailCtrl.clear();
-                      passwordCtrl.clear();
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text("User Registered Successfully")));
-                      }
-                    },
+                  ElevatedButton(
+                    onPressed: isLoading
+                        ? null
+                        : () async {
+                            await registerUser(
+                                userModel: UserModel(
+                              email: emailCtrl.text,
+                              password: passwordCtrl.text,
+                              username: usernameCtrl.text,
+                            ));
+                            usernameCtrl.clear();
+                            emailCtrl.clear();
+                            passwordCtrl.clear();
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text(
+                                          "User Registered Successfully")));
+                            }
+                          },
+                    style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(double.maxFinite, 50)),
                     child: isLoading
                         ? const CircularProgressIndicator()
                         : const Text("Sign Up"),
-                  )
+                  ),
                 ],
               ),
             ListTile(
@@ -172,6 +262,22 @@ class _AuthScreenState extends State<AuthScreen> {
                     controller: passwordCtrl,
                   ),
                   const SizedBox(height: 12),
+                  ElevatedButton(
+                    onPressed: isLoading
+                        ? null
+                        : () async {
+                            await loginUser(
+                                userModel: UserModel(
+                              email: emailCtrl.text,
+                              password: passwordCtrl.text,
+                            ));
+                          },
+                    style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(double.maxFinite, 50)),
+                    child: isLoading
+                        ? const CircularProgressIndicator()
+                        : const Text("Sign In"),
+                  ),
                   // CustomButtom(ontap: () {}, text: "Sign In")
                 ],
               ),

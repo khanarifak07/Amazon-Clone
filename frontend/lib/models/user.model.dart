@@ -3,7 +3,7 @@ import 'dart:convert';
 
 class UserModel {
   final String id;
-  final String username;
+  final String? username;
   final String email;
   final String password;
   final String? address;
@@ -11,7 +11,7 @@ class UserModel {
   final String? token;
   UserModel({
     this.id = '',
-    required this.username,
+    this.username,
     required this.email,
     required this.password,
     this.address,

@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/constants/global_variables.dart';
 import 'package:frontend/screens/auth/auth_screen.dart';
+import 'package:frontend/screens/homepage/homepage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  //get the access token
+  var prefs = await SharedPreferences.getInstance();
+  final String? token = prefs.getString('accessToken');
+  print("Access Token Retrived $token");
+  runApp(MyApp(accessToken: token));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final String? accessToken;
+  const MyApp({super.key, this.accessToken});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +29,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       title: 'Flutter Demo',
-      home: const AuthScreen(),
+      home: accessToken != null ? const HomePage() : const AuthScreen(),
     );
   }
 }
