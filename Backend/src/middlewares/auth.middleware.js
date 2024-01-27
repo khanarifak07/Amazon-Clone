@@ -4,36 +4,30 @@ import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
 
 const verifyJWT = asyncHandler(async (req, _, next) => {
-  //take the cookies from access token or header
-  //verify and decode the token via jwt verify
-  //now get the user id from that decoded token
-  //inject user to req.user
-  //return response
   try {
-    const accessToken =
+    //get the token from cookies or header
+    const token =
       req.cookies?.accessToken ||
-      req.header("Authorization")?.replace("Bearer", "");
-    if (!accessToken) {
+      req.header("Authorization").replace("Bearer ", "");
+    if (!token) {
       throw new ApiError(401, "Unauthorized Access");
     }
-    const decodedToken = jwt.verify(accessToken, process.env.ACCESS_TOKEN);
-
+    //verify the token and decode it
+    const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN);
     if (!decodedToken) {
-      throw new ApiError(401, "Invalid Token");
+      throw new ApiError(409, "Invalid Token");
     }
-
-    const user = await User.findById(decodedToken?._id).select(
-      "-password -refreshToken"
-    );
-
+    //get the user id from decoded token
+    const user = await User.findById(decodedToken?._id);
     if (!user) {
-      throw new ApiError(401, "unauthorized user");
+      throw new ApiError(400, "Unauthorized User or User not found");
     }
-
+    //inject user into req.user
     req.user = user;
+    //call next middleware
     next();
   } catch (error) {
-    throw new ApiError(500, "Error while verifying access token", error);
+    throw new ApiError(401, "Error while verifying token ", error);
   }
 });
 
