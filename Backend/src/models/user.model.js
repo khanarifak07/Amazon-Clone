@@ -27,7 +27,7 @@ const userSchema = new Schema(
       required: [true, "Password is required"],
       validate: {
         validator: (value) => {
-          return value.lenght < 6;
+          return value.length >= 6;
         },
         message: "Password should contain atleast 6 characters",
       },

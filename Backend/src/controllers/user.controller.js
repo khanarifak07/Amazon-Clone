@@ -27,7 +27,7 @@ const registerUser = asyncHandler(async (req, res) => {
     password,
   });
   if (!user) {
-    throw new ApiError(500, "Something went wring while creating user");
+    throw new ApiError(500, "Something went wrong while creating user");
   }
 
   const createdUser = await User.findById(user._id).select("-password");
@@ -98,4 +98,39 @@ const loginUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, loggedInUser, "User logged In Successfully"));
 });
 
-export { loginUser, registerUser };
+const logoutUser = asyncHandler(async (req, res) => {
+  //Only loggedIn user can logout so I need to verify user from the access token need to create verifyJWT middleware
+  //find the user by id  and update and remove the refresh token field
+  //set the oprions to clear the cookies
+  await User.findByIdAndUpdate(
+    req.user?._id,
+    {
+      $unset: {
+        refreshToken: 1, //unset remove the refreshToken field
+      },
+    },
+    {
+      new: true,
+    }
+  );
+
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+
+  return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json(new ApiResponse(200, {}, "User logged out successfully"));
+});
+
+const getCurrentUser = asyncHandler(async (req, res) => {
+  console.log(`Current User fetched ${req.user}`);
+  return res
+    .status(200)
+    .json(new ApiResponse(200, req.user, "Current User Fetched Successfully"));
+});
+
+export { getCurrentUser, loginUser, logoutUser, registerUser };
