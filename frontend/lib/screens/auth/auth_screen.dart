@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/config.dart';
 import 'package:frontend/constants/global_variables.dart';
+import 'package:frontend/models/profile.model.dart';
 import 'package:frontend/models/user.model.dart';
 import 'package:frontend/screens/homepage/homepage.dart';
 import 'package:frontend/widgets/custom_textfield.dart';
@@ -100,6 +101,40 @@ class _AuthScreenState extends State<AuthScreen> {
     }
   }
 
+  Future<void> saveCurrentUserToSharedPreference(ProfileModel profileModel) async {
+    try {
+      var prefs = await SharedPreferences.getInstance();
+      prefs.setString('currentUser', profileModel.toJson());
+      print("Current user details saved successfully ${profileModel.toJson()}");
+    } catch (e) {
+      print("Error while saving current user to shared preference $e");
+    }
+  }
+
+  //getCurrent User method
+  Future<void> getCurrentUser(String accessToken) async {
+    try {
+      //create dio instance
+      Dio dio = Dio();
+      //make dio get request
+      Response response = await dio.get(getCurrentUserApi,
+          options: Options(
+            headers: {"Authorization": "Bearer $accessToken"},
+          ));
+      //handle response
+      if (response.statusCode == 200) {
+        log("Current user details fetched successfully ${response.data}");
+        //get the current user data and save to shared preference
+        final currentUser = ProfileModel.fromMap(response.data['data']);
+        await saveCurrentUserToSharedPreference(currentUser);
+      } else {
+        print("Error while getting current user ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error while getting current user details");
+    }
+  }
+
   //login method
   Future<String?> loginUser({
     required UserModel userModel,
@@ -130,6 +165,7 @@ class _AuthScreenState extends State<AuthScreen> {
         final String? accessToken = response.data['data']['accessToken'];
         if (accessToken != null) {
           await saveAccessTokenToSharedPreference(accessToken);
+          await getCurrentUser(accessToken);
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => const HomePage()),

@@ -8,7 +8,6 @@ class UserModel {
   final String password;
   final String? address;
   final String? type;
-  final String? token;
   UserModel({
     this.id = '',
     this.username,
@@ -16,7 +15,6 @@ class UserModel {
     required this.password,
     this.address,
     this.type,
-    this.token,
   });
 
   UserModel copyWith({
@@ -26,7 +24,6 @@ class UserModel {
     String? password,
     String? address,
     String? type,
-    String? token,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -35,7 +32,6 @@ class UserModel {
       password: password ?? this.password,
       address: address ?? this.address,
       type: type ?? this.type,
-      token: token ?? this.token,
     );
   }
 
@@ -46,7 +42,6 @@ class UserModel {
       'password': password,
       'address': address,
       'type': type,
-      'token': token,
     };
   }
 
@@ -58,7 +53,6 @@ class UserModel {
       password: map['password'] as String,
       address: map['address'] as String,
       type: map['type'] as String,
-      token: map['token'] as String,
     );
   }
 
@@ -69,7 +63,7 @@ class UserModel {
 
   @override
   String toString() {
-    return 'UserModel(username: $username, email: $email, password: $password, address: $address, type: $type, token: $token)';
+    return 'UserModel(username: $username, email: $email, password: $password, address: $address, type: $type)';
   }
 
   @override
@@ -80,8 +74,7 @@ class UserModel {
         other.email == email &&
         other.password == password &&
         other.address == address &&
-        other.type == type &&
-        other.token == token;
+        other.type == type;
   }
 
   @override
@@ -90,7 +83,6 @@ class UserModel {
         email.hashCode ^
         password.hashCode ^
         address.hashCode ^
-        type.hashCode ^
-        token.hashCode;
+        type.hashCode;
   }
 }
