@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/constants/global_variables.dart';
 import 'package:frontend/screens/auth/auth_screen.dart';
-import 'package:frontend/screens/homepage/homepage.dart';
+import 'package:frontend/widgets/bottom_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       title: 'Flutter Demo',
-      home: accessToken != null ? const HomePage() : const AuthScreen(),
+      home: accessToken != null ? const BottomNavBar() : const AuthScreen(),
     );
   }
 }

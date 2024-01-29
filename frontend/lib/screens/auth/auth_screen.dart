@@ -6,7 +6,7 @@ import 'package:frontend/config.dart';
 import 'package:frontend/constants/global_variables.dart';
 import 'package:frontend/models/profile.model.dart';
 import 'package:frontend/models/user.model.dart';
-import 'package:frontend/screens/homepage/homepage.dart';
+import 'package:frontend/widgets/bottom_bar.dart';
 import 'package:frontend/widgets/custom_textfield.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -101,7 +101,8 @@ class _AuthScreenState extends State<AuthScreen> {
     }
   }
 
-  Future<void> saveCurrentUserToSharedPreference(ProfileModel profileModel) async {
+  Future<void> saveCurrentUserToSharedPreference(
+      ProfileModel profileModel) async {
     try {
       var prefs = await SharedPreferences.getInstance();
       prefs.setString('currentUser', profileModel.toJson());
@@ -166,10 +167,6 @@ class _AuthScreenState extends State<AuthScreen> {
         if (accessToken != null) {
           await saveAccessTokenToSharedPreference(accessToken);
           await getCurrentUser(accessToken);
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => const HomePage()),
-              (route) => false);
           return accessToken;
         } else {
           print("Error while saving access token to shared preference");
@@ -307,6 +304,14 @@ class _AuthScreenState extends State<AuthScreen> {
                               email: emailCtrl.text,
                               password: passwordCtrl.text,
                             ));
+                            if (mounted) {
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const BottomNavBar()),
+                                  (route) => false);
+                            }
                           },
                     style: ElevatedButton.styleFrom(
                         minimumSize: const Size(double.maxFinite, 50)),
