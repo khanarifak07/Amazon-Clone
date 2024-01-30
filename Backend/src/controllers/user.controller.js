@@ -134,9 +134,15 @@ const logoutUser = asyncHandler(async (req, res) => {
 
 const getCurrentUser = asyncHandler(async (req, res) => {
   console.log(`Current User fetched ${req.user}`);
+
+  const currentUser = await User.findById(req.user._id).select(
+    "-password -refreshToken"
+  );
   return res
     .status(200)
-    .json(new ApiResponse(200, req.user, "Current User Fetched Successfully"));
+    .json(
+      new ApiResponse(200, currentUser, "Current User Fetched Successfully")
+    );
 });
 
 export { getCurrentUser, loginUser, logoutUser, registerUser };
