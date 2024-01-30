@@ -42,7 +42,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
                 border: Border(
                     top: BorderSide(
                   color: pageIndex == 0
-                      ? GlobalVariables.selectedNavBarColor!
+                      ? GlobalVariables.selectedNavBarColor
                       : GlobalVariables.backgroundColor,
                   width: 5,
                 )),
@@ -58,7 +58,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
                 border: Border(
                     top: BorderSide(
                   color: pageIndex == 1
-                      ? GlobalVariables.selectedNavBarColor!
+                      ? GlobalVariables.selectedNavBarColor
                       : GlobalVariables.backgroundColor,
                   width: 5,
                 )),
@@ -74,7 +74,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
                 border: Border(
                     top: BorderSide(
                   color: pageIndex == 2
-                      ? GlobalVariables.selectedNavBarColor!
+                      ? GlobalVariables.selectedNavBarColor
                       : GlobalVariables.backgroundColor,
                   width: 5,
                 )),
