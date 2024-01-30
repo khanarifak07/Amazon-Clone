@@ -32,9 +32,11 @@ app.use(express.static("public"));
 //configuration for cookies
 app.use(cookieParser());
 
-//import auth router
+//import router
+import productRouter from "./routes/product.routes.js";
 import userRouter from "./routes/user.routes.js";
 
 app.use("/api/v1/user", userRouter);
+app.use("/api/v1/product", productRouter);
 
-export {app}
+export { app };
