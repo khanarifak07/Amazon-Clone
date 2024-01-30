@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/constants/global_variables.dart';
+import 'package:frontend/screens/admin_screens/product_screen.dart';
 
 class AdminHomePage extends StatefulWidget {
   const AdminHomePage({super.key});
@@ -11,9 +12,7 @@ class AdminHomePage extends StatefulWidget {
 class _AdminHomePageState extends State<AdminHomePage> {
   int page = 0;
   List<Widget> pages = [
-    const Center(
-      child: Text("Post Page"),
-    ),
+    const ProductScreen(),
     const Center(
       child: Text("Analytics Page"),
     ),
@@ -99,7 +98,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                         ? GlobalVariables.selectedNavBarColor
                         : Colors.white,
                   ))),
-                  child: const Icon(Icons.shopping_cart_outlined)),
+                  child: const Icon(Icons.all_inbox_outlined)),
               label: "",
             )
           ]),

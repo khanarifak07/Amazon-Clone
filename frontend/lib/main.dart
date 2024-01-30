@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/constants/global_variables.dart';
 import 'package:frontend/screens/auth/auth_screen.dart';
-import 'package:frontend/screens/home/admin_homepage.dart';
+import 'package:frontend/screens/admin_screens/admin_homepage.dart';
 import 'package:frontend/widgets/bottom_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
