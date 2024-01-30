@@ -1,8 +1,12 @@
+import 'dart:io';
+
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/constants/global_variables.dart';
 import 'package:frontend/widgets/custom_button.dart';
 import 'package:frontend/widgets/custom_textfield.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AddProductScreen extends StatefulWidget {
   const AddProductScreen({super.key});
@@ -25,6 +29,17 @@ class _AddProductScreenState extends State<AddProductScreen> {
     "Books",
     "Fashions"
   ];
+
+  List<File>? images;
+
+  Future<void> pickImages() async {
+    var pickedImages = await ImagePicker().pickMultiImage();
+    if (pickedImages.isNotEmpty) {
+      setState(() {
+        images = pickedImages.map((e) => File(e.path)).toList();
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,29 +65,52 @@ class _AddProductScreenState extends State<AddProductScreen> {
           child: Column(
             children: [
               GestureDetector(
-                onTap: () {},
-                child: DottedBorder(
-                  strokeWidth: 1,
-                  strokeCap: StrokeCap.butt,
-                  dashPattern: const [15, 5],
-                  borderType: BorderType.RRect,
-                  radius: const Radius.circular(20),
-                  child: Container(
-                    height: 200,
-                    width: double.maxFinite,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.image_outlined, size: 50),
-                        SizedBox(height: 10),
-                        Text("Select Product Image")
-                      ],
-                    ),
-                  ),
-                ),
+                onTap: () {
+                  pickImages();
+                },
+                child: images != null
+                    ? CarouselSlider.builder(
+                        itemCount: images!.length,
+                        itemBuilder: (context, index, realIndex) {
+                          return ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: SizedBox(
+                              width: double.maxFinite,
+                              child: Image.file(
+                                images![index],
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          );
+                        },
+                        options: CarouselOptions(
+                          height: 180,
+                          viewportFraction: 1,
+                          enableInfiniteScroll: false,
+                          enlargeCenterPage: true,
+                        ))
+                    : DottedBorder(
+                        strokeWidth: 1,
+                        strokeCap: StrokeCap.butt,
+                        dashPattern: const [15, 5],
+                        borderType: BorderType.RRect,
+                        radius: const Radius.circular(20),
+                        child: Container(
+                          height: 200,
+                          width: double.maxFinite,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.image_outlined, size: 50),
+                              SizedBox(height: 10),
+                              Text("Select Product Image")
+                            ],
+                          ),
+                        ),
+                      ),
               ),
               const SizedBox(height: 30),
               CustomTextField(
