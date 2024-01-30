@@ -10,26 +10,38 @@ void main() async {
   var prefs = await SharedPreferences.getInstance();
   final String? token = prefs.getString('accessToken');
   print("Access Token Retrived $token");
-  runApp(MyApp(accessToken: token));
+  //get the use type
+  final String? userType = prefs.getString('type');
+  print("type : $userType");
+
+  runApp(MyApp(accessToken: token, userType: userType));
 }
 
 class MyApp extends StatelessWidget {
   final String? accessToken;
-  const MyApp({super.key, this.accessToken});
+  final String? userType;
+  const MyApp({super.key, this.accessToken, this.userType});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        iconTheme: const IconThemeData(color: Colors.black),
-        appBarTheme: const AppBarTheme(elevation: 0),
-        scaffoldBackgroundColor: GlobalVariables.backgroundColor,
-        colorScheme: const ColorScheme.light(
-          primary: GlobalVariables.secondaryColor,
+        theme: ThemeData(
+          iconTheme: const IconThemeData(color: Colors.black),
+          appBarTheme: const AppBarTheme(elevation: 0),
+          scaffoldBackgroundColor: GlobalVariables.backgroundColor,
+          colorScheme: const ColorScheme.light(
+            primary: GlobalVariables.secondaryColor,
+          ),
         ),
-      ),
-      title: 'Flutter Demo',
-      home: accessToken != null ? const BottomNavBar() : const AuthScreen(),
-    );
+        title: 'Flutter Demo',
+        home: accessToken != null ? const BottomNavBar() : const AuthScreen()
+
+        /* accessToken!.isNotEmpty
+            ? userType == "user"
+                ? const BottomNavBar()
+                : const AdminHomePage()
+            : const AuthScreen() */
+
+        );
   }
 }

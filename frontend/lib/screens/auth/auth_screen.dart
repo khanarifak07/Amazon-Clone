@@ -112,6 +112,16 @@ class _AuthScreenState extends State<AuthScreen> {
     }
   }
 
+  Future<void> saveUserType(String usertype) async {
+    try {
+      var prefs = await SharedPreferences.getInstance();
+      prefs.setString('type', usertype);
+      log("user type saved :- $usertype");
+    } catch (e) {
+      print("Error while saving user type in sharedPreference $e");
+    }
+  }
+
   //getCurrent User method
   Future<void> getCurrentUser(String accessToken) async {
     try {
@@ -127,7 +137,9 @@ class _AuthScreenState extends State<AuthScreen> {
         log("Current user details fetched successfully ${response.data}");
         //get the current user data and save to shared preference
         final currentUser = ProfileModel.fromMap(response.data['data']);
+        final userType = response.data['data']['type'];
         await saveCurrentUserToSharedPreference(currentUser);
+        await saveUserType(userType);
       } else {
         print("Error while getting current user ${response.statusCode}");
       }
@@ -167,6 +179,12 @@ class _AuthScreenState extends State<AuthScreen> {
         if (accessToken != null) {
           await saveAccessTokenToSharedPreference(accessToken);
           await getCurrentUser(accessToken);
+
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const BottomNavBar()),
+              (route) => false);
+
           return accessToken;
         } else {
           print("Error while saving access token to shared preference");
@@ -304,14 +322,6 @@ class _AuthScreenState extends State<AuthScreen> {
                               email: emailCtrl.text,
                               password: passwordCtrl.text,
                             ));
-                            if (mounted) {
-                              Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const BottomNavBar()),
-                                  (route) => false);
-                            }
                           },
                     style: ElevatedButton.styleFrom(
                         minimumSize: const Size(double.maxFinite, 50)),

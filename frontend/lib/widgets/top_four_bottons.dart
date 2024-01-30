@@ -61,23 +61,30 @@ class _TopFourBottonsState extends State<TopFourBottons> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               GestureDetector(
-                onTap: isLoading ?  null :() async {
-                  await logoutUser();
-                  //remove the saved access token
-                  var prefs = await SharedPreferences.getInstance();
-                  prefs.remove('accessToken');
-                  //check the saved access token
-                  var prefss = await SharedPreferences.getInstance();
-                  final String? token = prefss.getString('accessToken');
-                  print("Access token after logout $token");
-                  if (mounted) {
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const AuthScreen()),
-                        (route) => false);
-                  }
-                },
+                onTap: isLoading
+                    ? null
+                    : () async {
+                        await logoutUser();
+                        //remove the saved access token
+                        var prefs = await SharedPreferences.getInstance();
+                        prefs.remove('accessToken');
+                        //remove the user type
+                        prefs.remove('type');
+                        //check the saved access token
+                        var prefss = await SharedPreferences.getInstance();
+                        final String? token = prefss.getString('accessToken');
+                        final String? userType = prefss.getString('type');
+                        print("Access token after logout $token");
+                        print("user type after logout $userType");
+
+                        if (mounted) {
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const AuthScreen()),
+                              (route) => false);
+                        }
+                      },
                 child: Container(
                   height: 50,
                   width: 180,
