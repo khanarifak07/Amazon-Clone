@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:frontend/config.dart';
 import 'package:frontend/constants/global_variables.dart';
 import 'package:frontend/models/product.model.dart';
-import 'package:frontend/widgets/custom_button.dart';
 import 'package:frontend/widgets/custom_textfield.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -202,7 +201,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                     },
                   )),
               const Spacer(),
-              CustomButtom(
+              /* CustomButtom(
                   ontap: () async {
                     await addProduct(
                       productModel: ProductModel(
@@ -219,7 +218,35 @@ class _AddProductScreenState extends State<AddProductScreen> {
                           [], // Use null-aware operator to handle null case
                     );
                   },
-                  child: const Text("Sell"))
+                  child: const Text("Sell")), */
+              ElevatedButton(
+                onPressed: isLoading
+                    ? null
+                    : () async {
+                        await addProduct(
+                          productModel: ProductModel(
+                            images: images!
+                                .map((File file) => file.path)
+                                .toList(), // Use null-aware operator to handle null case
+                            name: nameCtrl.text,
+                            description: descriptionCtrl.text,
+                            price: double.parse(priceCtrl.text),
+                            quantity: double.parse(quantityCtrl.text),
+                            category: category,
+                          ),
+                          productImages: images ??
+                              [], // Use null-aware operator to handle null case
+                        );
+                      },
+                style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(
+                  double.maxFinite,
+                  50,
+                )),
+                child: isLoading
+                    ? const CircularProgressIndicator()
+                    : const Text("Sell"),
+              )
             ],
           ),
         ));
