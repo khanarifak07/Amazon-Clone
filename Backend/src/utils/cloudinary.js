@@ -26,3 +26,8 @@ const uploadFileOnCloudinary = async (localFilePath) => {
 };
 
 export { uploadFileOnCloudinary };
+
+//Package.json
+// The -r dotenv/config flag is used to include the dotenv configuration before running your application,
+// allowing you to load environment variables from a .env file.
+// The --experimental-json-modules flag enables support for ECMAScript modules (ESM) when importing JSON files.
