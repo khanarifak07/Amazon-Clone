@@ -38,8 +38,8 @@ class Profile extends StatelessWidget {
                     color: Colors.black,
                   ),
                 ),
-                Container(
-                  child: const Padding(
+                const SizedBox(
+                  child: Padding(
                     padding: EdgeInsets.only(right: 16.0),
                     child: Row(
                       children: [

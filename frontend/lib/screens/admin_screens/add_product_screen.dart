@@ -1,12 +1,17 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:dio/dio.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/config.dart';
 import 'package:frontend/constants/global_variables.dart';
+import 'package:frontend/models/product.model.dart';
 import 'package:frontend/widgets/custom_button.dart';
 import 'package:frontend/widgets/custom_textfield.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddProductScreen extends StatefulWidget {
   const AddProductScreen({super.key});
@@ -16,10 +21,10 @@ class AddProductScreen extends StatefulWidget {
 }
 
 class _AddProductScreenState extends State<AddProductScreen> {
-  TextEditingController productNameCtrl = TextEditingController();
-  TextEditingController productDescCtrl = TextEditingController();
-  TextEditingController proPriceCtrl = TextEditingController();
-  TextEditingController proQtyCtrl = TextEditingController();
+  TextEditingController nameCtrl = TextEditingController();
+  TextEditingController descriptionCtrl = TextEditingController();
+  TextEditingController priceCtrl = TextEditingController();
+  TextEditingController quantityCtrl = TextEditingController();
 
   String category = "Mobiles";
   List<String> productCategories = [
@@ -30,6 +35,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     "Fashions"
   ];
 
+  bool isLoading = false;
   List<File>? images;
 
   Future<void> pickImages() async {
@@ -37,6 +43,60 @@ class _AddProductScreenState extends State<AddProductScreen> {
     if (pickedImages.isNotEmpty) {
       setState(() {
         images = pickedImages.map((e) => File(e.path)).toList();
+      });
+    }
+  }
+
+  Future<void> addProduct({
+    required ProductModel productModel,
+    required List<File> productImages,
+  }) async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+      //get the saved access Token
+      var prefs = await SharedPreferences.getInstance();
+      final String? token = prefs.getString('accessToken');
+      //create dio instance
+      Dio dio = Dio();
+      // Create a list of MultipartFile from the images
+      List<MultipartFile> imageFiles = [];
+      for (File image in productImages) {
+        imageFiles.add(
+          await MultipartFile.fromFile(
+            image.path,
+            filename:
+                'product_image_${DateTime.now().millisecondsSinceEpoch}.jpg',
+          ),
+        );
+      }
+      //send the formdata as you are passing images also
+      FormData formData = FormData.fromMap({
+        'name': productModel.name,
+        'description': productModel.description,
+        'price': productModel.price,
+        'quantity': productModel.quantity,
+        'category': productModel.category,
+        'images': imageFiles,
+      });
+
+      //make dio post request
+      Response response = await dio.post(addProductApi,
+          data: formData,
+          options: Options(headers: {"Authorization": "Bearer $token"}));
+
+      //handle the response
+      if (response.statusCode == 200) {
+        log("Product added successfully ${response.data}");
+      } else {
+        log("Product added Failed ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Errow while adding product $e");
+    } finally {
+      setState(() {
+        isLoading = false;
       });
     }
   }
@@ -84,7 +144,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                           );
                         },
                         options: CarouselOptions(
-                          height: 180,
+                          height: 200,
                           viewportFraction: 1,
                           enableInfiniteScroll: false,
                           enlargeCenterPage: true,
@@ -113,18 +173,17 @@ class _AddProductScreenState extends State<AddProductScreen> {
                       ),
               ),
               const SizedBox(height: 30),
-              CustomTextField(
-                  labelText: "Product Name", controller: productNameCtrl),
+              CustomTextField(labelText: "Product Name", controller: nameCtrl),
               const SizedBox(height: 10),
               CustomTextField(
                 labelText: "Product Description",
-                controller: productDescCtrl,
+                controller: descriptionCtrl,
                 maxLines: 6,
               ),
               const SizedBox(height: 10),
-              CustomTextField(labelText: "Price", controller: proPriceCtrl),
+              CustomTextField(labelText: "Price", controller: priceCtrl),
               const SizedBox(height: 10),
-              CustomTextField(labelText: "Quantity", controller: proQtyCtrl),
+              CustomTextField(labelText: "Quantity", controller: quantityCtrl),
               const SizedBox(height: 10),
               SizedBox(
                   width: double.maxFinite,
@@ -143,7 +202,24 @@ class _AddProductScreenState extends State<AddProductScreen> {
                     },
                   )),
               const Spacer(),
-              CustomButtom(ontap: () {}, child: const Text("Sell"))
+              CustomButtom(
+                  ontap: () async {
+                    await addProduct(
+                      productModel: ProductModel(
+                        images: images!
+                            .map((File file) => file.path)
+                            .toList(), // Use null-aware operator to handle null case
+                        name: nameCtrl.text,
+                        description: descriptionCtrl.text,
+                        price: double.parse(priceCtrl.text),
+                        quantity: double.parse(quantityCtrl.text),
+                        category: category,
+                      ),
+                      productImages: images ??
+                          [], // Use null-aware operator to handle null case
+                    );
+                  },
+                  child: const Text("Sell"))
             ],
           ),
         ));

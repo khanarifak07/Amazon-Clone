@@ -3,3 +3,5 @@ String registerApi = "$url/user/register";
 String loginApi = "$url/user/login";
 String logoutApi = "$url/user/logout";
 String getCurrentUserApi = "$url/user/get-current-user";
+
+String addProductApi = "$url/product/add-product";
