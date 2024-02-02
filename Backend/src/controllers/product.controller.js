@@ -44,6 +44,6 @@ const addProduct = asyncHandler(async (req, res) => {
       .status(500)
       .json(new ApiResponse(500, null, "Error uploading one or more images"));
   }
-});
+}); 
 
 export { addProduct };
