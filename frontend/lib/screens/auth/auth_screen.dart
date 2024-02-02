@@ -6,6 +6,7 @@ import 'package:frontend/config.dart';
 import 'package:frontend/constants/global_variables.dart';
 import 'package:frontend/models/profile.model.dart';
 import 'package:frontend/models/user.model.dart';
+import 'package:frontend/screens/admin_screens/admin_homepage.dart';
 import 'package:frontend/widgets/bottom_bar.dart';
 import 'package:frontend/widgets/custom_textfield.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -161,7 +162,10 @@ class _AuthScreenState extends State<AuthScreen> {
       setState(() {
         isLoading = true;
       });
+//get the user type from share preference
 
+      var prefs = await SharedPreferences.getInstance();
+      final String? userType = prefs.getString('type');
       //create dio instance
       Dio dio = Dio();
       //create form data or normal data
@@ -179,11 +183,17 @@ class _AuthScreenState extends State<AuthScreen> {
         if (accessToken != null) {
           await saveAccessTokenToSharedPreference(accessToken);
           await getCurrentUser(accessToken);
-
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => const BottomNavBar()),
-              (route) => false);
+          if (userType == "user") {
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const BottomNavBar()),
+                (route) => false);
+          } else {
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const AdminHomePage()),
+                (route) => false);
+          }
 
           return accessToken;
         } else {

@@ -7,8 +7,8 @@ class ProductModel {
   final List<String> images;
   final String name;
   final String description;
-  final double price;
-  final double quantity;
+  final int price;
+  final int quantity;
   final String category;
   String id;
   ProductModel({
@@ -25,8 +25,8 @@ class ProductModel {
     List<String>? images,
     String? name,
     String? description,
-    double? price,
-    double? quantity,
+    int? price,
+    int? quantity,
     String? category,
     String? id,
   }) {
@@ -54,12 +54,11 @@ class ProductModel {
 
   factory ProductModel.fromMap(Map<String, dynamic> map) {
     return ProductModel(
-      images: List<String>.from(
-          map['images'] as List<String>), // Fix: Closing parenthesis added
+      images: List<String>.from(map['images'] as List<dynamic>),
       name: map['name'] as String,
       description: map['description'] as String,
-      price: map['price'] as double,
-      quantity: map['quantity'] as double,
+      price: map['price'] as int,
+      quantity: map['quantity'] as int,
       category: map['category'] as String,
       id: map['_id'] as String,
     );

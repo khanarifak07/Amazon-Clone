@@ -230,8 +230,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
                                 .toList(), // Use null-aware operator to handle null case
                             name: nameCtrl.text,
                             description: descriptionCtrl.text,
-                            price: double.parse(priceCtrl.text),
-                            quantity: double.parse(quantityCtrl.text),
+                            price: int.parse(priceCtrl.text),
+                            quantity: int.parse(quantityCtrl.text),
                             category: category,
                           ),
                           productImages: images ??

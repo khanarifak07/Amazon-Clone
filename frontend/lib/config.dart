@@ -5,3 +5,4 @@ String logoutApi = "$url/user/logout";
 String getCurrentUserApi = "$url/user/get-current-user";
 
 String addProductApi = "$url/product/add-product";
+String getAllProductsApi = "$url/product/get-all-products";

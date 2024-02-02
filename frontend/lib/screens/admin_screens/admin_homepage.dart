@@ -1,9 +1,7 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:frontend/config.dart';
 import 'package:frontend/constants/global_variables.dart';
+import 'package:frontend/screens/admin_screens/analytics_page.dart';
 import 'package:frontend/screens/admin_screens/product_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AdminHomePage extends StatefulWidget {
   const AdminHomePage({super.key});
@@ -13,13 +11,10 @@ class AdminHomePage extends StatefulWidget {
 }
 
 class _AdminHomePageState extends State<AdminHomePage> {
- 
   int page = 0;
   List<Widget> pages = [
     const ProductScreen(),
-    const Center(
-      child: Text("Analytics Page"),
-    ),
+    const AnaylyticsPage(),
     const Center(
       child: Text("Cart Page"),
     ),
