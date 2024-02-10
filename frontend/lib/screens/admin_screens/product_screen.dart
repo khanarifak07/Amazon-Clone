@@ -62,6 +62,35 @@ class _ProductScreenState extends State<ProductScreen> {
     return null;
   }
 
+  void deletedProduct({required id}) async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+      //get the saved access token
+      var prefs = await SharedPreferences.getInstance();
+      var token = prefs.getString('accessToken');
+      //create dio instance
+      Dio dio = Dio();
+      //no need to create form data or body
+      //make the dio request
+      Response response = await dio.delete(deleteProductApi(id),
+          options: Options(headers: {"Authorization": "Bearer $token"}));
+      //handle the response
+      if (response.statusCode == 200) {
+        print("Product  Deleted Successfully ${response.data}");
+      } else {
+        log("error while deleting product ${response.statusCode}");
+      }
+    } catch (e) {
+      log("Error while deleting product $e");
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -94,10 +123,16 @@ class _ProductScreenState extends State<ProductScreen> {
                       ),
                       const SizedBox(height: 10),
                       Row(
+                        // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           Text(productsData.name),
                           IconButton(
-                              onPressed: () {},
+                              onPressed: () async {
+                                setState(() {
+                                  deletedProduct(id: productsData.id);
+                                  getAllProducts();
+                                });
+                              },
                               icon: const Icon(
                                 Icons.delete_outline,
                               ))
@@ -222,7 +257,9 @@ class _ProductScreenState extends State<ProductScreen> {
                         CupertinoPageRoute(
                             builder: (context) => const AddProductScreen()))
                     .then((value) {
-                  setState(() {});
+                  setState(() {
+                    getAllProducts();
+                  });
                 });
               },
               tooltip: "Add a product",
