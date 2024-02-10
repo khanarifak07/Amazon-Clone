@@ -20,7 +20,7 @@ const addProduct = asyncHandler(async (req, res) => {
   const imagesUrls = await Promise.all(
     imagesLocalPaths.map(uploadFileOnCloudinary)
   );
-  console.log(`Image URLs :-  ${imagesUrls.map((url)=> url.url)}`);
+  console.log(`Image URLs :-  ${imagesUrls.map((url) => url.url)}`);
 
   // Check if all uploads were successful
   if (imagesUrls.every((url) => url !== null)) {
@@ -44,6 +44,13 @@ const addProduct = asyncHandler(async (req, res) => {
       .status(500)
       .json(new ApiResponse(500, null, "Error uploading one or more images"));
   }
-}); 
+});
 
-export { addProduct };
+const getAllProducts = asyncHandler(async (_, res) => {
+  const products = await Product.find();
+  return res
+    .status(200)
+    .json(new ApiResponse(200, products, "All products fetched successfully"));
+});
+
+export { addProduct, getAllProducts };
