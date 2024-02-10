@@ -53,4 +53,18 @@ const getAllProducts = asyncHandler(async (_, res) => {
     .json(new ApiResponse(200, products, "All products fetched successfully"));
 });
 
-export { addProduct, getAllProducts };
+const deleteProduct = asyncHandler(async (req, res) => {
+  //get the product id from params
+  const prodId = req.params.prodId;
+  if (!prodId) {
+    throw new ApiError(400, "Product not found with this id");
+  }
+
+  const deletedProd = await Product.findByIdAndDelete(prodId);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, deletedProd, "Product deleted successfully"));
+});
+
+export { addProduct, deleteProduct, getAllProducts };
