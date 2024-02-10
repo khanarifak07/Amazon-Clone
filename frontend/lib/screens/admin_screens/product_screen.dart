@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/config.dart';
 import 'package:frontend/models/product.model.dart';
 import 'package:frontend/screens/admin_screens/add_product_screen.dart';
+import 'package:frontend/widgets/single_product.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductScreen extends StatefulWidget {
@@ -17,6 +18,8 @@ class ProductScreen extends StatefulWidget {
 
 class _ProductScreenState extends State<ProductScreen> {
   bool isLoading = false;
+
+  List<ProductModel>? products;
 
   Future<List<ProductModel>?> getAllProducts() async {
     try {
@@ -42,6 +45,9 @@ class _ProductScreenState extends State<ProductScreen> {
             .map((productData) => ProductModel.fromMap(productData))
             .toList();
         log("All products fetched successfully ${response.data}");
+        setState(() {
+          this.products = products;
+        });
         return products;
       } else {
         log("Error while fetching all products ${response.statusCode}");
@@ -56,12 +62,52 @@ class _ProductScreenState extends State<ProductScreen> {
     return null;
   }
 
-
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getAllProducts().then((fetchedProducts) {
+      setState(() {
+        products = fetchedProducts;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: FutureBuilder(
+    return products == null
+        ? const Center(child: CircularProgressIndicator())
+        : Scaffold(
+            body: GridView.builder(
+                // padding: const EdgeInsets.all(30),
+                itemCount: products!.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                ),
+                itemBuilder: (context, index) {
+                  final productsData = products![index];
+                  return Column(
+                    children: [
+                      SizedBox(
+                        height: 140,
+                        child: SingleProduct(image: productsData.images[0]),
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          Text(productsData.name),
+                          IconButton(
+                              onPressed: () {},
+                              icon: const Icon(
+                                Icons.delete_outline,
+                              ))
+                        ],
+                      )
+                    ],
+                  );
+                })
+
+            /* FutureBuilder(
           future: getAllProducts(),
           builder: (context, snapshot) {
             print("Snapshot Data: ${snapshot.data}");
@@ -72,27 +118,51 @@ class _ProductScreenState extends State<ProductScreen> {
               if (snapshot.data!.isEmpty) {
                 return const Center(child: Text("No products found"));
               } else {
-                return ListView(
+                return GridView.builder(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2),
+                        itemBuilder: (context, index) {
+                          return null;
+                        })
+
+                    /* ListView(
                   children: snapshot.data!
-                      .map((e) => ListTile(
-                            title: Text(e.name),
-                            subtitle: Column(
-                              children: [
-                                Text(e.description),
-                                Text(e.price.toString()),
-                                Text(e.quantity.toString()),
-                              ],
-                            ),
-                          ))
+                      .map(
+                        (e) => Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: 140,
+                              child: SingleProduct(
+                                image: e.images[0],
+                              ),
+                            )
+                          ],
+                        )
+
+                        /* ListTile(
+                          title: Text(e.name),
+                          subtitle: Column(
+                            children: [
+                              Text(e.description),
+                              Text(e.price.toString()),
+                              Text(e.quantity.toString()),
+                            ],
+                          ),
+                        ) */
+                        ,
+                      )
                       .toList(),
-                );
+                ) */
+                    ;
               }
             } else {
               return const Center(child: Text("No data available"));
             }
-          })
+          }) */
 
-     /*  Column(
+            /*  Column(
         children: [
           TextButton(
               onPressed: () async {
@@ -144,18 +214,22 @@ class _ProductScreenState extends State<ProductScreen> {
           ),
         ],
       ) */
-      ,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-              context,
-              CupertinoPageRoute(
-                  builder: (context) => const AddProductScreen()));
-        },
-        tooltip: "Add a product",
-        child: const Icon(Icons.add),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-    );
+            ,
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                        context,
+                        CupertinoPageRoute(
+                            builder: (context) => const AddProductScreen()))
+                    .then((value) {
+                  setState(() {});
+                });
+              },
+              tooltip: "Add a product",
+              child: const Icon(Icons.add),
+            ),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+          );
   }
 }

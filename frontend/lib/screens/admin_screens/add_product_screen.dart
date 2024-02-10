@@ -237,6 +237,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
                           productImages: images ??
                               [], // Use null-aware operator to handle null case
                         );
+
+                        Navigator.pop(context);
                       },
                 style: ElevatedButton.styleFrom(
                     minimumSize: const Size(
