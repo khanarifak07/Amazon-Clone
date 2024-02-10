@@ -67,4 +67,18 @@ const deleteProduct = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, deletedProd, "Product deleted successfully"));
 });
 
-export { addProduct, deleteProduct, getAllProducts };
+const getProductByCategory = asyncHandler(async (req, res) => {
+  // /api/v1/product?category=Essentials
+  // const category = req.params.category;
+  const { category } = req.query;
+
+  const product = await Product.find({ category: category });
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, product, "Product by category  fetched successfully")
+    );
+});
+
+export { addProduct, deleteProduct, getAllProducts, getProductByCategory };
