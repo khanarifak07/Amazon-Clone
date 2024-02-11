@@ -61,6 +61,8 @@ class _CategoryDealScreenState extends State<CategoryDealScreen> {
       });
     });
   }
+  //we can assign the fethced products like this or directly in the function as this.products = products (setstate)
+  //Reference (product_screen.dart)
 
   @override
   Widget build(BuildContext context) {

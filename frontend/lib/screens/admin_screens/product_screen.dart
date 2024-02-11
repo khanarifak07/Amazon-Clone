@@ -42,7 +42,8 @@ class _ProductScreenState extends State<ProductScreen> {
             .toList();
         log("All Products Fetched Successfully: $products");
         setState(() {
-          this.products = products;
+          this.products =
+              products; //first approach to assing the global product var to return var data
         });
 
         return products;
@@ -92,6 +93,12 @@ class _ProductScreenState extends State<ProductScreen> {
   void initState() {
     super.initState();
     getAllProducts();
+    //second approach to assign the return products to global variable
+    /*  getAllProducts().then((fetchedProducts) {
+      setState(() {
+        products = fetchedProducts;
+      });
+    }); */
   }
 
   @override
