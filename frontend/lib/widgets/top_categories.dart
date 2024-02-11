@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/constants/global_variables.dart';
+import 'package:frontend/screens/categoryDealScreen/category_deal_screen.dart';
 
 class TopCategories extends StatelessWidget {
   const TopCategories({super.key});
@@ -13,23 +14,33 @@ class TopCategories extends StatelessWidget {
           itemCount: GlobalVariables.categoryImages.length,
           itemExtent: 85,
           itemBuilder: (context, index) {
-            return Column(
-              children: [
-                SizedBox(
-                  height: 40,
-                  width: 40,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(50),
-                    child: Image.asset(
-                        GlobalVariables.categoryImages[index]['image']!),
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => CategoryDealScreen(
+                            category: GlobalVariables.categoryImages[index]
+                                ['title']!)));
+              },
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 40,
+                    width: 40,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(50),
+                      child: Image.asset(
+                          GlobalVariables.categoryImages[index]['image']!),
+                    ),
                   ),
-                ),
-                Text(
-                  GlobalVariables.categoryImages[index]['title']!,
-                  style: const TextStyle(
-                      fontSize: 12, fontWeight: FontWeight.w400),
-                )
-              ],
+                  Text(
+                    GlobalVariables.categoryImages[index]['title']!,
+                    style: const TextStyle(
+                        fontSize: 12, fontWeight: FontWeight.w400),
+                  )
+                ],
+              ),
             );
           }),
     );

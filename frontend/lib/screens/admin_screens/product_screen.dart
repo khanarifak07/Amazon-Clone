@@ -112,13 +112,15 @@ class _ProductScreenState extends State<ProductScreen> {
                 itemCount: products!.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
+                  childAspectRatio: 1.5 / 2,
                 ),
                 itemBuilder: (context, index) {
                   final productsData = products![index];
                   return Column(
                     children: [
+                      const SizedBox(height: 20),
                       SizedBox(
-                        height: 140,
+                        height: 180,
                         child: SingleProduct(image: productsData.images[0]),
                       ),
                       const SizedBox(height: 10),

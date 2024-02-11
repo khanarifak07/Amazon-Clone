@@ -7,3 +7,5 @@ String getCurrentUserApi = "$url/user/get-current-user";
 String addProductApi = "$url/product/add-product";
 String getAllProductsApi = "$url/product/get-all-products";
 String deleteProductApi(String id) => "$url/product/delete-product/$id";
+String getProductsByCategoryApi(String category) =>
+    "$url/product/products-by-category?category=$category";
