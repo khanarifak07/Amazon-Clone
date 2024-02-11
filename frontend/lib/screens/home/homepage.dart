@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/constants/global_variables.dart';
+import 'package:frontend/screens/search_screen/search_screen.dart';
 import 'package:frontend/widgets/address_box.dart';
 import 'package:frontend/widgets/carousel_image.dart';
 import 'package:frontend/widgets/deal_of_the_day.dart';
@@ -13,6 +14,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  void navigateToSearchScreen(String query) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => SearchScreen(searchQuery: query)));
+  }
+
   TextEditingController searchCtrl = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -38,6 +46,7 @@ class _HomePageState extends State<HomePage> {
                       color: Colors.white,
                     ),
                     child: TextField(
+                      onSubmitted: navigateToSearchScreen,
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.only(top: 10),
                         prefixIcon: const Icon(

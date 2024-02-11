@@ -109,7 +109,11 @@ class _CategoryDealScreenState extends State<CategoryDealScreen> {
                                   SingleProduct(image: productsData.images[0]),
                             ),
                             const SizedBox(height: 6),
-                            Text(productsData.name)
+                            Text(
+                              productsData.name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            )
                           ],
                         );
                       },
