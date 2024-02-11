@@ -130,10 +130,10 @@ class _ProductScreenState extends State<ProductScreen> {
                           onPressed: () async {
                             // Delete the product
                             deletedProduct(id: productsData.id);
-                            // After deleting, fetch all products again
-                            await getAllProducts();
                             // Update the UI with the fetched products
-                            setState(() {});
+                            setState(() async {
+                              await getAllProducts();
+                            });
                           },
                           icon: const Icon(Icons.delete_outline),
                         ),
