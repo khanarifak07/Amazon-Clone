@@ -41,6 +41,10 @@ class _ProductScreenState extends State<ProductScreen> {
             .map((productsData) => ProductModel.fromMap(productsData))
             .toList();
         log("All Products Fetched Successfully: $products");
+        setState(() {
+          this.products = products;
+        });
+
         return products;
       } else {
         log("Error while fetching all products: ${response.statusCode}");
@@ -87,68 +91,60 @@ class _ProductScreenState extends State<ProductScreen> {
   @override
   void initState() {
     super.initState();
-    getAllProducts().then((fetchedProducts) {
-      setState(() {
-        products = fetchedProducts;
-      });
-    });
+    getAllProducts();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GridView.builder(
-          padding: const EdgeInsets.all(30),
-          itemCount: products!.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 1.5 / 2,
-          ),
-          itemBuilder: (context, index) {
-            final productsData = products![index];
-            return Column(
-              children: [
-                const SizedBox(height: 20),
-                SizedBox(
-                  height: 180,
-                  child: SingleProduct(image: productsData.images[0]),
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      body: products != null
+          ? GridView.builder(
+              padding: const EdgeInsets.all(30),
+              itemCount: products!.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 1.5 / 2,
+                crossAxisSpacing: 20,
+                mainAxisExtent: 230,
+              ),
+              itemBuilder: (context, index) {
+                final productsData = products![index];
+                return Column(
                   children: [
-                    // Text(productsData.name),
-                    IconButton(
-                        onPressed: () async {
-                          setState(() {
+                    SizedBox(
+                      height: 180,
+                      child: SingleProduct(image: productsData.images[0]),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text(productsData.name),
+                        IconButton(
+                          onPressed: () async {
+                            // Delete the product
                             deletedProduct(id: productsData.id);
-                            getAllProducts();
-                          });
-                        },
-                        icon: const Icon(
-                          Icons.delete_outline,
-                        )),
-                    TextButton(
-                        onPressed: () {
-                          getAllProducts();
-                        },
-                        child: const Text("Fetch All Products"))
+                            // After deleting, fetch all products again
+                            await getAllProducts();
+                            // Update the UI with the fetched products
+                            setState(() {});
+                          },
+                          icon: const Icon(Icons.delete_outline),
+                        ),
+                      ],
+                    ),
                   ],
-                ),
-              ],
-            );
-          }),
+                );
+              },
+            )
+          : const Center(
+              child:
+                  CircularProgressIndicator()), // Show loading indicator when products are null
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
-                  context,
-                  CupertinoPageRoute(
-                      builder: (context) => const AddProductScreen()))
-              .then((value) {
-            setState(() {
-              getAllProducts();
-            });
-          });
+            context,
+            CupertinoPageRoute(builder: (context) => const AddProductScreen()),
+          );
         },
         tooltip: "Add a product",
         child: const Icon(Icons.add),
