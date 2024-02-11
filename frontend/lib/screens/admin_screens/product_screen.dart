@@ -147,11 +147,14 @@ class _ProductScreenState extends State<ProductScreen> {
               child:
                   CircularProgressIndicator()), // Show loading indicator when products are null
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
+        onPressed: () async {
+          await Navigator.push(
             context,
             CupertinoPageRoute(builder: (context) => const AddProductScreen()),
           );
+          setState(() {
+            getAllProducts();
+          });
         },
         tooltip: "Add a product",
         child: const Icon(Icons.add),
