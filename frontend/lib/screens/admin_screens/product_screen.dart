@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/config.dart';
 import 'package:frontend/models/product.model.dart';
 import 'package:frontend/screens/admin_screens/add_product_screen.dart';
+import 'package:frontend/widgets/single_product.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductScreen extends StatefulWidget {
@@ -17,7 +18,7 @@ class ProductScreen extends StatefulWidget {
 
 class _ProductScreenState extends State<ProductScreen> {
   bool isLoading = false;
-  List<ProductScreen>? products;
+  List<ProductModel>? products;
 
   Future<List<ProductModel>?> getAllProducts() async {
     try {
@@ -83,7 +84,7 @@ class _ProductScreenState extends State<ProductScreen> {
     }
   }
 
-  /* @override
+  @override
   void initState() {
     super.initState();
     getAllProducts().then((fetchedProducts) {
@@ -91,37 +92,37 @@ class _ProductScreenState extends State<ProductScreen> {
         products = fetchedProducts;
       });
     });
-  } */
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: GridView.builder(
-          // padding: const EdgeInsets.all(30),
-          // itemCount: products!.length,
+          padding: const EdgeInsets.all(30),
+          itemCount: products!.length,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             childAspectRatio: 1.5 / 2,
           ),
           itemBuilder: (context, index) {
-            // final productsData = products![index];
+            final productsData = products![index];
             return Column(
               children: [
                 const SizedBox(height: 20),
-                const SizedBox(
+                SizedBox(
                   height: 180,
-                  // child: SingleProduct(image: productsData.images[0]),
+                  child: SingleProduct(image: productsData.images[0]),
                 ),
                 const SizedBox(height: 10),
                 Row(
-                  // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     // Text(productsData.name),
                     IconButton(
                         onPressed: () async {
                           setState(() {
-                            // deletedProduct(id: productsData.id);
-                            // getAllProducts();
+                            deletedProduct(id: productsData.id);
+                            getAllProducts();
                           });
                         },
                         icon: const Icon(
@@ -145,7 +146,7 @@ class _ProductScreenState extends State<ProductScreen> {
                       builder: (context) => const AddProductScreen()))
               .then((value) {
             setState(() {
-              // getAllProducts();
+              getAllProducts();
             });
           });
         },
