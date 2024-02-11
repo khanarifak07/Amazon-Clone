@@ -18,6 +18,7 @@ class CategoryDealScreen extends StatefulWidget {
 
 class _CategoryDealScreenState extends State<CategoryDealScreen> {
   List<ProductModel>? products;
+  bool isDataLoaded = false;
   Future<List<ProductModel>?> getProductsByCategory({
     required String category,
   }) async {
@@ -56,6 +57,7 @@ class _CategoryDealScreenState extends State<CategoryDealScreen> {
     getProductsByCategory(category: widget.category).then((fetchedProducts) {
       setState(() {
         products = fetchedProducts;
+        isDataLoaded = true;
       });
     });
   }
@@ -63,58 +65,60 @@ class _CategoryDealScreenState extends State<CategoryDealScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
-        child: AppBar(
-          automaticallyImplyLeading: false,
-          centerTitle: true,
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: GlobalVariables.appBarGradient,
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(60),
+          child: AppBar(
+            automaticallyImplyLeading: false,
+            centerTitle: true,
+            flexibleSpace: Container(
+              decoration: const BoxDecoration(
+                gradient: GlobalVariables.appBarGradient,
+              ),
             ),
-          ),
-          title: Text(
-            widget.category,
-            style: const TextStyle(color: Colors.black),
+            title: Text(
+              widget.category,
+              style: const TextStyle(color: Colors.black),
+            ),
           ),
         ),
-      ),
-      body: products == null
-          ? const CircularProgressIndicator()
-          : Column(
-              children: [
-                Center(
-                  child: Text("Keep shopping for ${widget.category}"),
-                ),
-                SizedBox(
-                  height: 200,
-                  child: GridView.builder(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.all(10),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 1,
-                      childAspectRatio: 1.4,
-                      mainAxisSpacing: 10,
-                    ),
-                    itemCount: products!.length,
-                    itemBuilder: (context, index) {
-                      final productsData = products![index];
-                      return Column(
-                        children: [
-                          SizedBox(
-                            height: 120,
-                            child: SingleProduct(image: productsData.images[0]),
-                          ),
-                          const SizedBox(height: 6),
-                          Text(productsData.name)
-                        ],
-                      );
-                    },
+        body: products != null
+            ? Column(
+                children: [
+                  Center(
+                    child: Text("Keep shopping for ${widget.category}"),
                   ),
-                ),
-              ],
-            ),
-    );
+                  SizedBox(
+                    height: 200,
+                    child: GridView.builder(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.all(10),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 1,
+                        childAspectRatio: 1.4,
+                        mainAxisSpacing: 10,
+                      ),
+                      itemCount: products!.length,
+                      itemBuilder: (context, index) {
+                        final productsData = products![index];
+                        return Column(
+                          children: [
+                            SizedBox(
+                              height: 120,
+                              child:
+                                  SingleProduct(image: productsData.images[0]),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(productsData.name)
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              )
+            : isDataLoaded
+                ? Text("No proucts found for ${widget.category}")
+                : const CircularProgressIndicator());
   }
 }
