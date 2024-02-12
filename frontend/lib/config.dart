@@ -9,3 +9,5 @@ String getAllProductsApi = "$url/product/products";
 String deleteProductApi(String id) => "$url/product/delete-product/$id";
 String getProductsByCategoryApi(String category) =>
     "$url/product/products-by-category?category=$category";
+String searchProductApi(String searchkeyword) =>
+    "$url/product/search-product/$searchkeyword";
