@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/constants/global_variables.dart';
 import 'package:frontend/models/product.model.dart';
+import 'package:frontend/widgets/ratings.dart';
 
 class SearchedProduct extends StatelessWidget {
   final ProductModel productModel;
@@ -18,12 +20,27 @@ class SearchedProduct extends StatelessWidget {
             ),
             const SizedBox(width: 20),
             Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   productModel.name,
-                  style: const TextStyle(fontSize: 16),
+                  style: const TextStyle(fontSize: 20),
                 ),
-                Text('\$\t${productModel.price.toString()}'),
+                const SizedBox(height: 5),
+                const RatingStars(rating: 4),
+                const SizedBox(height: 5),
+                Text(
+                  '\$\t${productModel.price.toString()}',
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 5),
+                const Text("Eligible for FREE shipping"),
+                const SizedBox(height: 5),
+                Text(
+                  "In Stock",
+                  style: TextStyle(color: GlobalVariables.selectedNavBarColor),
+                ),
               ],
             )
           ],
