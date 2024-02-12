@@ -25,6 +25,6 @@ router.route("/delete-product/:prodId").delete(verifyJWT, deleteProduct);
 // router.route("/products-by-category/:category").get(verifyJWT, getProductByCategory);
 router.route("/products-by-category").get(verifyJWT, getProductByCategory);
 //search product
-router.route("/search-product").get(verifyJWT, searchProduct);
+router.route("/search-product/:name").get(verifyJWT, searchProduct);
 
 export default router;

@@ -94,7 +94,8 @@ const getProductByCategory = asyncHandler(async (req, res) => {
 });
 
 const searchProduct = asyncHandler(async (req, res) => {
-  const search = req.body.search;
+  // const search = req.body.search;
+  const search = req.params.name;
 
   const searchProduct = await Product.find({
     name: { $regex: ".*" + search + ".*", $options: "i" },
