@@ -4,6 +4,7 @@ import {
   deleteProduct,
   getAllProducts,
   getProductByCategory,
+  searchProduct,
 } from "../controllers/product.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
@@ -23,5 +24,7 @@ router.route("/delete-product/:prodId").delete(verifyJWT, deleteProduct);
 //api/v1/products?category=Mobiles --> req.query.category
 // router.route("/products-by-category/:category").get(verifyJWT, getProductByCategory);
 router.route("/products-by-category").get(verifyJWT, getProductByCategory);
+//search product
+router.route("/search-product").get(verifyJWT, searchProduct);
 
 export default router;

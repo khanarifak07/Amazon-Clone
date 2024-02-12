@@ -72,13 +72,48 @@ const getProductByCategory = asyncHandler(async (req, res) => {
   // const category = req.params.category;
   const { category } = req.query;
 
-  const product = await Product.find({ category: category });
+  const products = await Product.find({ category: category });
+
+  if (products.length === 0) {
+    return res.status(404).json({
+      status: 404,
+      message: "No products found for the given category",
+      success: false,
+    });
+  }
 
   return res
     .status(200)
     .json(
-      new ApiResponse(200, product, "Product by category  fetched successfully")
+      new ApiResponse(
+        200,
+        products,
+        "Product by category  fetched successfully"
+      )
     );
 });
 
-export { addProduct, deleteProduct, getAllProducts, getProductByCategory };
+const searchProduct = asyncHandler(async (req, res) => {
+  const search = req.body.search;
+
+  const searchProduct = await Product.find({
+    name: { $regex: ".*" + search + ".*", $options: "i" },
+  });
+  if (searchProduct.length > 0) {
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, searchProduct, "Product searched successfully")
+      );
+  } else {
+    throw new ApiError(404, "No product found");
+  }
+});
+
+export {
+  addProduct,
+  deleteProduct,
+  getAllProducts,
+  getProductByCategory,
+  searchProduct,
+};
