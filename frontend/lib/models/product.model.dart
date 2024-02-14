@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:collection/collection.dart';
+import 'package:frontend/models/rating.model.dart';
 
 class ProductModel {
   final List<String> images;
@@ -10,6 +11,7 @@ class ProductModel {
   final int price;
   final int quantity;
   final String category;
+  final List<RatingModel>? rating;
   String id;
   ProductModel({
     required this.images,
@@ -18,6 +20,7 @@ class ProductModel {
     required this.price,
     required this.quantity,
     required this.category,
+    this.rating,
     this.id = '',
   });
 
@@ -49,6 +52,7 @@ class ProductModel {
       'price': price,
       'quantity': quantity,
       'category': category,
+      'rating': rating,
     };
   }
 
@@ -61,6 +65,13 @@ class ProductModel {
       quantity: map['quantity'] as int,
       category: map['category'] as String,
       id: map['_id'] as String,
+      rating: map['ratings'] != null
+          ? List<RatingModel>.from(
+              map['ratings']?.map(
+                (x) => RatingModel.fromMap(x),
+              ),
+            )
+          : null,
     );
   }
 
