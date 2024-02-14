@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   addProduct,
+  dealOfTheDayProduct,
   deleteProduct,
   getAllProducts,
   getProductByCategory,
@@ -29,5 +30,7 @@ router.route("/products-by-category").get(verifyJWT, getProductByCategory);
 router.route("/search-product/:name").get(verifyJWT, searchProduct);
 //rating product
 router.route("/rate-product").post(verifyJWT, rateProduct);
+//deal of the day product
+router.route("/deal-of-the-day").get(verifyJWT, dealOfTheDayProduct);
 
 export default router;

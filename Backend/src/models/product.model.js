@@ -1,17 +1,20 @@
 import mongoose, { Schema } from "mongoose";
 
-const ratingSchema = new Schema({
-  userId: {
-    type: String,
-    required: true,
+const ratingSchema = new Schema(
+  {
+    userId: {
+      type: String,
+      required: true,
+    },
+    rating: {
+      type: Number,
+      required: [true, "Why no Rating?"],
+      min: 1,
+      max: 5,
+    },
   },
-  rating: {
-    type: Number,
-    required: [true, "Why no Rating?"],
-    min: 1,
-    max: 5,
-  },
-});
+  { _id: false }
+);
 
 const productSchema = new Schema(
   {

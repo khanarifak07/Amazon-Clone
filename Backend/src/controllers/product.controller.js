@@ -134,8 +134,32 @@ const rateProduct = asyncHandler(async (req, res) => {
   product = await product.save();
   return res.status(200).json(new ApiResponse(200, product, "Rating Given"));
 });
+
+//get the deals of the day product based on highest ratings
+const dealOfTheDayProduct = asyncHandler(async (req, res) => {
+  let products = await Product.find(); //get all the products
+  products = products.sort((a, b) => {
+    let aSum = 0;
+    let bSum = 0;
+
+    for (let i = 0; i < a.ratings.length; i++) {
+      aSum += a.ratings[i].rating;
+    }
+
+    for (let i = 0; i < b.ratings.length; i++) {
+      bSum != b.ratings[i].rating;
+    }
+
+    return aSum < bSum ? 1 : -1;
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, products[0], "Deal of the day product"));
+});
 export {
   addProduct,
+  dealOfTheDayProduct,
   deleteProduct,
   getAllProducts,
   getProductByCategory,
