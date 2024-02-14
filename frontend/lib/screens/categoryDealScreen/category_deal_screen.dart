@@ -19,6 +19,7 @@ class CategoryDealScreen extends StatefulWidget {
 class _CategoryDealScreenState extends State<CategoryDealScreen> {
   List<ProductModel>? products;
   bool isDataLoaded = false;
+  //
   Future<List<ProductModel>?> getProductsByCategory({
     required String category,
   }) async {

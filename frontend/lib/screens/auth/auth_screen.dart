@@ -164,8 +164,6 @@ class _AuthScreenState extends State<AuthScreen> {
       });
 //get the user type from share preference
 
-      var prefs = await SharedPreferences.getInstance();
-      final String? userType = prefs.getString('type');
       //create dio instance
       Dio dio = Dio();
       //create form data or normal data
@@ -183,6 +181,8 @@ class _AuthScreenState extends State<AuthScreen> {
         if (accessToken != null) {
           await saveAccessTokenToSharedPreference(accessToken);
           await getCurrentUser(accessToken);
+          var prefs = await SharedPreferences.getInstance();
+          final String? userType = prefs.getString('type');
           if (userType == "user") {
             Navigator.pushAndRemoveUntil(
                 context,

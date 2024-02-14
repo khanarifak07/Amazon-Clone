@@ -1,11 +1,16 @@
+import 'dart:developer';
+
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:frontend/config.dart';
 import 'package:frontend/constants/global_variables.dart';
 import 'package:frontend/models/product.model.dart';
 import 'package:frontend/screens/search_screen/search_screen.dart';
 import 'package:frontend/widgets/custom_button.dart';
 import 'package:frontend/widgets/ratings.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductDetailsPage extends StatefulWidget {
   final ProductModel productModel;
@@ -21,6 +26,41 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         context,
         MaterialPageRoute(
             builder: (context) => SearchScreen(searchQuery: query)));
+  }
+
+  void rateProduct({
+    required ProductModel productModel,
+    required double rating,
+  }) async {
+    try {
+      //get the saved access Token
+      var prefs = await SharedPreferences.getInstance();
+      var token = prefs.getString('accessToken');
+      //create dio instance
+      Dio dio = Dio();
+      //create formdata
+      var data = {
+        'prodId': productModel.id,
+        'rating': rating,
+      };
+      /*  FormData formData = FormData.fromMap({
+        'id': productModel.id,
+        'rating': rating,
+      }); */
+      //make dio post request
+      Response response = await dio.post(rateProductApi,
+          data: data,
+          options: Options(headers: {"Authorization": "Bearer $token"}));
+
+      //handle the response
+      if (response.statusCode == 200) {
+        log("Rating given successfully ${response.data}");
+      } else {
+        log("Error while rating product ${response.statusCode}");
+      }
+    } catch (e) {
+      log("Error while giving rating $e");
+    }
   }
 
   @override
@@ -162,7 +202,12 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   color: Colors.orangeAccent,
                 );
               },
-              onRatingUpdate: (rating) {})
+              onRatingUpdate: (rating) {
+                rateProduct(
+                  productModel: widget.productModel,
+                  rating: rating,
+                );
+              })
         ],
       ),
     );

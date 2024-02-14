@@ -11,3 +11,4 @@ String getProductsByCategoryApi(String category) =>
     "$url/product/products-by-category?category=$category";
 String searchProductApi(String searchkeyword) =>
     "$url/product/search-product/$searchkeyword";
+String rateProductApi = "$url/product/rate-product";

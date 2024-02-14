@@ -35,9 +35,12 @@ class MyApp extends StatelessWidget {
           ),
         ),
         title: 'Flutter Demo',
-        home:
+        // initialRoute: '/splash',
+        // routes: const {},
+        home: /* SplashScreen(
+          accessToken: accessToken,
+          userType: userType,) */
             //  accessToken != null ? const BottomNavBar() : const AuthScreen()
-
             accessToken != null
                 ? userType == "user"
                     ? const BottomNavBar()
