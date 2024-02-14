@@ -56,7 +56,8 @@ const getAllProducts = asyncHandler(async (_, res) => {
 const deleteProduct = asyncHandler(async (req, res) => {
   //get the product id from params
   const prodId = req.params.prodId;
-  if (!prodId) {
+  const product = await Product.findById(prodId);
+  if (!product) {
     throw new ApiError(400, "Product not found with this id");
   }
 
@@ -111,10 +112,33 @@ const searchProduct = asyncHandler(async (req, res) => {
   }
 });
 
+const rateProduct = asyncHandler(async (req, res) => {
+  // const prodId = req.params.prodId;
+  const userId = req.user?._id;
+  const { prodId, rating } = req.body;
+  let product = await Product.findById(prodId);
+  if (!product) {
+    throw new ApiError(400, "Product not found");
+  }
+  for (let i = 0; i < product.ratings.length; i++) {
+    if (product.ratings[i].userId == userId) {
+      product.ratings.splice(i, 1);
+      break;
+    }
+  }
+  const ratingSchema = {
+    userId: userId,
+    rating,
+  };
+  product.ratings.push(ratingSchema);
+  product = await product.save();
+  return res.status(200).json(new ApiResponse(200, product, "Rating Given"));
+});
 export {
   addProduct,
   deleteProduct,
   getAllProducts,
   getProductByCategory,
+  rateProduct,
   searchProduct,
 };

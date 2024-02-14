@@ -4,6 +4,7 @@ import {
   deleteProduct,
   getAllProducts,
   getProductByCategory,
+  rateProduct,
   searchProduct,
 } from "../controllers/product.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
@@ -26,5 +27,7 @@ router.route("/delete-product/:prodId").delete(verifyJWT, deleteProduct);
 router.route("/products-by-category").get(verifyJWT, getProductByCategory);
 //search product
 router.route("/search-product/:name").get(verifyJWT, searchProduct);
+//rating product
+router.route("/rate-product").post(verifyJWT, rateProduct);
 
 export default router;
