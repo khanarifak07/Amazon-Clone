@@ -8,11 +8,13 @@ class UserModel {
   final String password;
   final String? address;
   final String? type;
+  final List<dynamic> cart;
   UserModel({
     this.id = '',
     this.username,
     required this.email,
     required this.password,
+    required this.cart,
     this.address,
     this.type,
   });
@@ -32,6 +34,7 @@ class UserModel {
       password: password ?? this.password,
       address: address ?? this.address,
       type: type ?? this.type,
+      cart: cart,
     );
   }
 
@@ -42,6 +45,7 @@ class UserModel {
       'password': password,
       'address': address,
       'type': type,
+      'cart': cart,
     };
   }
 
@@ -53,6 +57,11 @@ class UserModel {
       password: map['password'] as String,
       address: map['address'] as String,
       type: map['type'] as String,
+      cart: List<Map<String, dynamic>>.from(
+        map['cart']?.map(
+          (x) => Map<String, dynamic>.from(x),
+        ),
+      ),
     );
   }
 

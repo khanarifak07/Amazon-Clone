@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/config.dart';
 import 'package:frontend/constants/global_variables.dart';
 import 'package:frontend/models/product.model.dart';
+import 'package:frontend/screens/product_details_page/products_details_page.dart';
 import 'package:frontend/widgets/single_product.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -104,20 +105,29 @@ class _CategoryDealScreenState extends State<CategoryDealScreen> {
                       itemCount: products!.length,
                       itemBuilder: (context, index) {
                         final productsData = products![index];
-                        return Column(
-                          children: [
-                            SizedBox(
-                              height: 120,
-                              child:
-                                  SingleProduct(image: productsData.images[0]),
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              productsData.name,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            )
-                          ],
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ProductDetailsPage(
+                                        productModel: productsData)));
+                          },
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: 120,
+                                child: SingleProduct(
+                                    image: productsData.images[0]),
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                productsData.name,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              )
+                            ],
+                          ),
                         );
                       },
                     ),

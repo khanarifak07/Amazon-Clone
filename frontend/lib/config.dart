@@ -13,3 +13,4 @@ String searchProductApi(String searchkeyword) =>
     "$url/product/search-product/$searchkeyword";
 String rateProductApi = "$url/product/rate-product";
 String dealOfTheDayApi = "$url/product/deal-of-the-day";
+String addToCartApi = "$url/product/add-to-cart";

@@ -63,6 +63,43 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     }
   }
 
+  bool added = false;
+
+  void addToCart({
+    required String prodId,
+  }) async {
+    try {
+      setState(() {
+        added = true;
+      });
+      //get the saved acess token
+      var prefs = await SharedPreferences.getInstance();
+      var token = prefs.getString('accessToken');
+      //create dio instance
+      Dio dio = Dio();
+      //create body as we are passing prodId in bod (req.body)
+      var body = {
+        'prodId': widget.productModel.id,
+      };
+      //make dio post request
+      Response response = await dio.post(addToCartApi,
+          data: body,
+          options: Options(headers: {"Authorization": "Bearer $token"}));
+      //handle the response
+      if (response.statusCode == 200) {
+        log("product added to cart successfully ${response.data}");
+      } else {
+        log("error while adding to cart ${response.statusCode}");
+      }
+    } catch (e) {
+      log("error while adding product to cart $e");
+    } finally {
+      setState(() {
+        added = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -175,7 +212,9 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: CustomButtom(
-                ontap: () {},
+                ontap: () async {
+                  addToCart(prodId: widget.productModel.id);
+                },
                 color: const Color.fromRGBO(254, 216, 19, 1),
                 child: const Text(
                   "Add to Cart",
