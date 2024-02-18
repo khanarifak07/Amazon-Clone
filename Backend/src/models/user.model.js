@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import mongoose, { Schema } from "mongoose";
+import productSchema from "./product.model.js";
 
 const userSchema = new Schema(
   {
@@ -43,6 +44,15 @@ const userSchema = new Schema(
     refreshToken: {
       type: String,
     },
+    cart: [
+      {
+        product: productSchema,
+        quantity: {
+          type: Number,
+          default: 1,
+        },
+      },
+    ],
   },
   { timestamps: true, versionKey: false }
 );

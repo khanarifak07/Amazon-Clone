@@ -1,4 +1,5 @@
 import { Product } from "../models/product.model.js";
+import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
@@ -9,6 +10,7 @@ const addProduct = asyncHandler(async (req, res) => {
 
   if (
     [name, description, price, quantity, category].some(
+      //some is used for any condition check (any)
       (fields) => fields.trim() === ""
     )
   ) {
@@ -24,6 +26,7 @@ const addProduct = asyncHandler(async (req, res) => {
 
   // Check if all uploads were successful
   if (imagesUrls.every((url) => url !== null)) {
+    //every is returning the value as (bool) based on the condition
     // Use the array of image URLs when creating the product
     const product = await Product.create({
       name,
@@ -113,7 +116,6 @@ const searchProduct = asyncHandler(async (req, res) => {
 });
 
 const rateProduct = asyncHandler(async (req, res) => {
-  // const prodId = req.params.prodId;
   const userId = req.user?._id;
   const { prodId, rating } = req.body;
   let product = await Product.findById(prodId);
@@ -136,9 +138,10 @@ const rateProduct = asyncHandler(async (req, res) => {
 });
 
 //get the deals of the day product based on highest ratings
-const dealOfTheDayProduct = asyncHandler(async (req, res) => {
+const dealOfTheDayProduct = asyncHandler(async (_, res) => {
   let products = await Product.find(); //get all the products
   products = products.sort((a, b) => {
+    //sort method is mutates (change) the original array
     let aSum = 0;
     let bSum = 0;
 
@@ -147,18 +150,54 @@ const dealOfTheDayProduct = asyncHandler(async (req, res) => {
     }
 
     for (let i = 0; i < b.ratings.length; i++) {
-      bSum != b.ratings[i].rating;
+      bSum += b.ratings[i].rating;
     }
 
     return aSum < bSum ? 1 : -1;
   });
+  // const numbers = [-9,8,7,-6,4,-2] //basic example of sorting for numbers in an array
+  // const test = numbers.sort((a,b)=>{
+  //   return a < b ? 1:-1  //ascending order o/p -> [8,7,4,-2,-6,-9]
+  //   return a > b ? 1 :-1 //descending order o/p -> [-9,-6,-2,4,7,8]
+  // })
+  // OR
+  // const test = numbers.sort((a,b)=> a-b); //this will sort it in numerical ascending order
 
   return res
     .status(200)
     .json(new ApiResponse(200, products[0], "Deal of the day product"));
 });
+
+const addToCart = asyncHandler(async (req, res) => {
+  //get the product
+  const { prodId } = req.body;
+  let product = await Product.findById(prodId);
+  let user = await User.findById(req.user._id);
+  //
+  if (user.cart.length == 0) {
+    user.cart.push({ product, quantity });
+  } else {
+    let isProductFound = false;
+    for (let i = 0; i < user.cart.length; i++) {
+      const element = user.cart[i];
+      if (element.product._id.equals(product._id)) {
+        isProductFound = true;
+      }
+    }
+    if (isProductFound) {
+      let productt = user.cart.find((e) => e.product._id.equals(product._id));
+      productt.quantity += 1;
+    } else {
+      user.cart.push({ product, quantity });
+    }
+  }
+  user = await user.save();
+  return res.status(200).json(new ApiResponse(200, user, "Cart Updated"));
+});
+
 export {
   addProduct,
+  addToCart,
   dealOfTheDayProduct,
   deleteProduct,
   getAllProducts,
