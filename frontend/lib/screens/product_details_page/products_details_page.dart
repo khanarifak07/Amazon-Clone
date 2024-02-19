@@ -79,7 +79,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       Dio dio = Dio();
       //create body as we are passing prodId in bod (req.body)
       var body = {
-        'prodId': widget.productModel.id,
+        'prodId': prodId,
       };
       //make dio post request
       Response response = await dio.post(addToCartApi,
@@ -214,6 +214,10 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               child: CustomButtom(
                 ontap: () async {
                   addToCart(prodId: widget.productModel.id);
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text("Added To Cart"),
+                    duration: Duration(milliseconds: 500),
+                  ));
                 },
                 color: const Color.fromRGBO(254, 216, 19, 1),
                 child: const Text(

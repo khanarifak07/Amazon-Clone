@@ -14,7 +14,6 @@ class _AddressBoxState extends State<AddressBox> {
   bool isDataLoaded = false;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getData();
   }

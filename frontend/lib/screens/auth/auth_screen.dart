@@ -271,7 +271,6 @@ class _AuthScreenState extends State<AuthScreen> {
                         : () async {
                             await registerUser(
                                 userModel: UserModel(
-                              cart: [],
                               email: emailCtrl.text,
                               password: passwordCtrl.text,
                               username: usernameCtrl.text,
@@ -330,7 +329,6 @@ class _AuthScreenState extends State<AuthScreen> {
                         : () async {
                             await loginUser(
                                 userModel: UserModel(
-                              cart: [],
                               email: emailCtrl.text,
                               password: passwordCtrl.text,
                             ));

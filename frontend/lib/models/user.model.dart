@@ -8,13 +8,13 @@ class UserModel {
   final String password;
   final String? address;
   final String? type;
-  final List<dynamic> cart;
+  final List<dynamic>? cart;
   UserModel({
     this.id = '',
     this.username,
     required this.email,
     required this.password,
-    required this.cart,
+    this.cart,
     this.address,
     this.type,
   });
@@ -51,18 +51,14 @@ class UserModel {
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      id: map['_id'] as String,
-      username: map['username'] as String,
-      email: map['email'] as String,
-      password: map['password'] as String,
-      address: map['address'] as String,
-      type: map['type'] as String,
-      cart: List<Map<String, dynamic>>.from(
-        map['cart']?.map(
-          (x) => Map<String, dynamic>.from(x),
-        ),
-      ),
-    );
+        id: map['_id'] as String,
+        username: map['username'] as String,
+        email: map['email'] as String,
+        password: map['password'] ?? '',
+        address: map['address'] as String,
+        type: map['type'] as String,
+        cart: List<Map<String, dynamic>>.from(
+            map['cart']?.map((x) => Map<String, dynamic>.from(x))));
   }
 
   String toJson() => json.encode(toMap());
